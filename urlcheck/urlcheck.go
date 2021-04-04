@@ -2,17 +2,24 @@ package urlcheck
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 )
 
+type Result struct {
+	Url string
+	Status string
+}
+
+
 var errRequestFailed = errors.New("request failed")
 
-func Check(url string) error {
+// chan<- : send only channel
+func Check(url string, c chan<- Result) {
 	resp, err := http.Get(url);
+	status := "OK"
 	if err != nil || resp.StatusCode >= 400 {
-		fmt.Printf("%s request error: status=%d\n", url, resp.StatusCode)
-		return errRequestFailed
+		status = "FAILED"
 	}
-	return nil;
+
+	c <- Result{url, status}
 }

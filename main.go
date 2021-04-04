@@ -2,6 +2,7 @@ package main //github.com/hyun6/learn_go
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/hyun6/learn_go/accounts"
 	"github.com/hyun6/learn_go/dictionary"
@@ -62,17 +63,21 @@ func testUrlcheck() {
 		"https://www.instagram.com/",
 		"https://academy.nomadcoders.co/",
 	}
+
+	now := time.Now()
 	results := map[string]string{}
+	ch := make(chan urlcheck.Result)
 	for _, url := range urls {
-		err := urlcheck.Check(url)
-		if err != nil {
-			results[url] = "FAILED"
-		} else {
-			results[url] = "OK"
-		}
+		go urlcheck.Check(url, ch)
 	}
 
-	for url, result := range results {
-		fmt.Println(url, ": ", result)
+	//for result := range ch { // wait forever
+	for i:= 0; i < len(urls); i++ {
+		result := <- ch
+		results[result.Url] = result.Status
+		fmt.Println(result.Url, ": ", result.Status, "ms")
 	}
+
+	fmt.Println("done")
+	fmt.Println("time : ", time.Since(now).Milliseconds())
 }
