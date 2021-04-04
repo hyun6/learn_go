@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hyun6/learn_go/accounts"
+	"github.com/hyun6/learn_go/dictionary"
 )
 
 func main() {
@@ -22,5 +23,21 @@ func main() {
 		fmt.Println(err)
 	} else {
 		fmt.Println(moonAccount.Balance())
+	}
+
+	myDictionary := dictionary.Dictionary{}
+	myDictionary.Add("hello", "world")
+	found, err := myDictionary.Search("hello")
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(found)
+	}
+	myDictionary.Delete("hello")
+	found, err = myDictionary.Search("hello")
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(found)
 	}
 }
